@@ -4,6 +4,8 @@
 
 This library allows the rapid deployment of a robot and offers a tracking of it. This can be relevant for example in the context of Raspeberry Pi boards.
 
+A full documentation is available [here](https://antnlocks.github.io/loopleSheet/doc/build/html/index.html).
+
 **Features:**
 - sleep time between 2 executions of the subroutine is read from the Google Sheet
 - display the date and time of the last execution of the subroutine in the Google Sheet
