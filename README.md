@@ -74,7 +74,7 @@ You can edit this behavior.
 ```python
 import os
 import sys
-import loopleSheet
+import loopleSheet as ls
 
 def subroutine(loopleSht):
 	# Doing some work...
@@ -84,7 +84,7 @@ def subroutine(loopleSht):
 
 
 # The .json is next to the script
-LoopleSheet(json_path=os.path.dirname(os.path.realpath(sys.argv[0]))+'/credentials.json',
+ls.LoopleSheet(json_path=os.path.dirname(os.path.realpath(sys.argv[0]))+'/credentials.json',
 spreadsheet_id='1LzDqgfWea1cIafGnXhIc2OEFCHzoFOSdO1qsSlK3rGk',
 runnable=subroutine,
 catchingExceptionsFromRunnable=True).start()
