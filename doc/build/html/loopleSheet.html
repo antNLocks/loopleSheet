@@ -309,7 +309,7 @@ If <em>False</em>, <em>start</em> will finish and transmit the exception</p>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#loopleSheet.loopleSheet.LoopleSheet.post" title="loopleSheet.loopleSheet.LoopleSheet.post"><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code></a>(msg)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#loopleSheet.loopleSheet.LoopleSheet.post" title="loopleSheet.loopleSheet.LoopleSheet.post"><code class="xref py py-obj docutils literal notranslate"><span class="pre">post</span></code></a>(msg[, processColumns])</p></td>
 <td><p>Post a message in the Google Sheet with the date and time associated.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#loopleSheet.loopleSheet.LoopleSheet.setGoogleSheetStructure" title="loopleSheet.loopleSheet.LoopleSheet.setGoogleSheetStructure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setGoogleSheetStructure</span></code></a>(**kwargs)</p></td>
@@ -322,14 +322,17 @@ If <em>False</em>, <em>start</em> will finish and transmit the exception</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="loopleSheet.loopleSheet.LoopleSheet.post">
-<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loopleSheet.loopleSheet.LoopleSheet.post" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processColumns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#loopleSheet.loopleSheet.LoopleSheet.post" title="Permalink to this definition">#</a></dt>
 <dd><p>Post a message in the Google Sheet with the date and time associated.
 The columns used are <em>messageColumn</em> for the message and <em>msgDateColumn</em> for the date and time.
-The messages and date and time are append at the bottom of the columns (the maximum of the two so that message and date and time are in the same row).</p>
+The messages and date and time are appended at the bottom of the columns (the maximum of the two so that message and date and time are in the same row).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>msg</strong><span class="classifier">str</span></dt><dd><p>The message to post</p>
+</dd>
+<dt><strong>processColumns</strong><span class="classifier">bool, optional, default False</span></dt><dd><p>If <em>False</em>, LoopleSheet assumes that <em>msgColumn</em> and <em>msgDateColumn</em> are not modified by a third party and doesn’t process these columns.
+If <em>True</em>, LoopleSheet fetches <em>msgColumn</em> and <em>msgDateColumn</em>, thus increasing memory and gspread api usage with the number of posts.</p>
 </dd>
 </dl>
 </dd>

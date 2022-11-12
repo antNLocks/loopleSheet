@@ -44,8 +44,10 @@ class LoopleSheet:
         self.googleSheetAPIErrorVerbose = googleSheetAPIErrorVerbose
         self.datetimeFormat = datetimeFormat
         self.setGoogleSheetStructure()
+        self._msgColLen = -1
+        self._dtColLen = -1
 
-        scope =['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+        scope =['https://www.googleapis.com/auth/spreadsheets']
 
         connection = False
         while not connection:
@@ -139,16 +141,19 @@ class LoopleSheet:
             time.sleep(int(self.logWorksheet.acell(self.sleepTimeCell).value))
 
 
-    def post(self, msg):
+    def post(self, msg, processColumns=False):
         """
         Post a message in the Google Sheet with the date and time associated.
         The columns used are *messageColumn* for the message and *msgDateColumn* for the date and time.
-        The messages and date and time are append at the bottom of the columns (the maximum of the two so that message and date and time are in the same row).
+        The messages and date and time are appended at the bottom of the columns (the maximum of the two so that message and date and time are in the same row).
 
         Parameters
         ----------
         msg : str
             The message to post
+        processColumns : bool, optional, default False
+            If *False*, LoopleSheet assumes that *msgColumn* and *msgDateColumn* are not modified by a third party and doesn't process these columns.
+            If *True*, LoopleSheet fetches *msgColumn* and *msgDateColumn*, thus increasing memory and gspread api usage with the number of posts.
 
         Note
         ----
@@ -160,12 +165,17 @@ class LoopleSheet:
             msgColNb = gspread.utils.a1_to_rowcol(self.messageColumn + '1')[1]
             dtColNb = gspread.utils.a1_to_rowcol(self.msgDateColumn + '1')[1]
 
-            msgColLen = len(self.logWorksheet.col_values(msgColNb))
-            dtColLen = len(self.logWorksheet.col_values(dtColNb))
-            rowNb = max(msgColLen, dtColLen) + 1
+            if processColumns or self._msgColLen < 0 or self._dtColLen < 0:
+                self._msgColLen = len(self.logWorksheet.col_values(msgColNb))
+                self._dtColLen = len(self.logWorksheet.col_values(dtColNb))
+            
+            rowNb = max(self._msgColLen, self._dtColLen) + 1
 
             self.logWorksheet.update_cell(rowNb, msgColNb, msg)
             self.logWorksheet.update_cell(rowNb, dtColNb, dt_string)
+
+            self._msgColLen = rowNb
+            self._dtColLen = rowNb
 
             if self.verbose:
                 print(f'{dt_string} - Success : "{msg}" posted')

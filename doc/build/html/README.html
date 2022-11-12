@@ -256,6 +256,7 @@
 <h1>loopleSheet<a class="headerlink" href="#looplesheet" title="Permalink to this heading">#</a></h1>
 <p><strong>The purpose of this library is to provide a subroutine wrapper connected to a Google Sheet. It implements the main loop (calling the subroutine in a loop) and interacts with a Google Sheet.</strong></p>
 <p>This library allows the rapid deployment of a robot and offers a tracking of it. This can be relevant for example in the context of Raspeberry Pi boards.</p>
+<p>A full documentation is available <a class="reference external" href="https://antnlocks.github.io/loopleSheet/doc/build/html/index.html">here</a>.</p>
 <p><strong>Features:</strong></p>
 <ul class="simple">
 <li><p>sleep time between 2 executions of the subroutine is read from the Google Sheet</p></li>
@@ -315,7 +316,7 @@ I suggest your Google Sheet to be like this one :</p>
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">loopleSheet</span>
+<span class="kn">import</span> <span class="nn">loopleSheet</span> <span class="k">as</span> <span class="nn">ls</span>
 
 <span class="k">def</span> <span class="nf">subroutine</span><span class="p">(</span><span class="n">loopleSht</span><span class="p">):</span>
 	<span class="c1"># Doing some work...</span>
@@ -325,7 +326,7 @@ I suggest your Google Sheet to be like this one :</p>
 
 
 <span class="c1"># The .json is next to the script</span>
-<span class="n">LoopleSheet</span><span class="p">(</span><span class="n">json_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">+</span><span class="s1">&#39;/credentials.json&#39;</span><span class="p">,</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">LoopleSheet</span><span class="p">(</span><span class="n">json_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="o">+</span><span class="s1">&#39;/credentials.json&#39;</span><span class="p">,</span>
 <span class="n">spreadsheet_id</span><span class="o">=</span><span class="s1">&#39;1LzDqgfWea1cIafGnXhIc2OEFCHzoFOSdO1qsSlK3rGk&#39;</span><span class="p">,</span>
 <span class="n">runnable</span><span class="o">=</span><span class="n">subroutine</span><span class="p">,</span>
 <span class="n">catchingExceptionsFromRunnable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
