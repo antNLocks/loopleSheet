@@ -4,6 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import time
 import traceback
+import sys
 
 
 class GoogleSheetAPIError(Exception):
@@ -30,22 +31,26 @@ class LoopleSheet:
         If *False*, *start* will finish and transmit the exception
     verbose : bool, optional, default False
         If *True*, *start* will print some informations
-    googleSheetAPIErrorVerbose : bool, optional, default True
-        If *True*, info about the exceptions raised by the Google Sheet API will be printed
+    errorStream : str, optional, default 'stderr'
+        The stream to write errors to. Accepted values are : *'google sheet'*, *'stderr'*, *'both'* or *None*
     datetimeFormat : str, optional, default '%d/%m %H:%M:%S'
         The format used for the date and time. See `datetime.strftime()` for more details
     """
-    def __init__(self, json_path, spreadsheet_id, runnable, catchingExceptionsFromRunnable=False, verbose=False, googleSheetAPIErrorVerbose=True, datetimeFormat='%d/%m %H:%M:%S'):
+    def __init__(self, json_path, spreadsheet_id, runnable, catchingExceptionsFromRunnable=False, verbose=False, errorStream='stderr', datetimeFormat='%d/%m %H:%M:%S'):
         self.json_path = json_path
         self.spreadsheet_id = spreadsheet_id
         self.runnable = runnable
         self.catchingExceptionsFromRunnable = catchingExceptionsFromRunnable
         self.verbose = verbose
-        self.googleSheetAPIErrorVerbose = googleSheetAPIErrorVerbose
+        self.errorStream = errorStream
         self.datetimeFormat = datetimeFormat
         self.setGoogleSheetStructure()
         self._msgColLen = -1
         self._dtColLen = -1
+
+        self._STREAM_ERROR_GOOGLE_SHEET = 'google sheet'
+        self._STREAM_ERROR_STDERR = 'stderr'
+        self._STREAM_ERROR_BOTH = 'both'
 
         scope =['https://www.googleapis.com/auth/spreadsheets']
 
@@ -62,9 +67,9 @@ class LoopleSheet:
                     print('Success : Got Google Sheet authorization and Google Sheet accessed')
             
             except Exception as e:
-                if self.googleSheetAPIErrorVerbose:
+                if self.errorStream in [self._STREAM_ERROR_BOTH, self._STREAM_ERROR_STDERR]:
                     dt_string = datetime.now().strftime(self.datetimeFormat)
-                    print(f'{dt_string} - GoogleSheetAPIError (acess error): {e}')
+                    print(f'{dt_string} - GoogleSheetAPIError (acess error): {e}', file=sys.stderr)
 
                 time.sleep(3)
 
@@ -118,6 +123,7 @@ class LoopleSheet:
             try:
                 dt_string = datetime.now().strftime(self.datetimeFormat)
                 self.logWorksheet.update(self.lastExecDateTimeCell, dt_string)
+                sleepTime = int(self.logWorksheet.acell(self.sleepTimeCell).value)
 
                 if self.verbose:
                     print('              ----------------------                   ')
@@ -127,18 +133,21 @@ class LoopleSheet:
                 self.runnable(self)
             
             except GoogleSheetAPIError as e:
-                if self.googleSheetAPIErrorVerbose:
-                    print(f'{dt_string} - GoogleSheetAPIError : {e}')
+                if self.errorStream in [self._STREAM_ERROR_BOTH, self._STREAM_ERROR_STD_OUT]:
+                    print(f'{dt_string} - GoogleSheetAPIError : {e}', file=sys.stderr)
             except Exception as e:
                 if self.catchingExceptionsFromRunnable:
-                    self.post(f'{dt_string} - Error runnable - {traceback.format_exc()}')
-
-                    if self.verbose:
-                        print(f'{dt_string} - Error runnable - {traceback.format_exc()}')
+                    if self.errorStream in [self._STREAM_ERROR_STDERR, self._STREAM_ERROR_BOTH]:
+                        print(f'{dt_string} - Error runnable - {traceback.format_exc()}', file=sys.stderr)
+                    if self.errorStream in [self._STREAM_ERROR_GOOGLE_SHEET, self._STREAM_ERROR_BOTH]:
+                        try:
+                            self.post(f'{dt_string} - Error runnable - {traceback.format_exc()}')
+                        except:
+                            pass
                 else:
                     raise
 
-            time.sleep(int(self.logWorksheet.acell(self.sleepTimeCell).value))
+            time.sleep(sleepTime)
 
 
     def post(self, msg, processColumns=False):
