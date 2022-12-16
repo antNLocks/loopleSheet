@@ -133,7 +133,7 @@ class LoopleSheet:
                 self.runnable(self)
             
             except GoogleSheetAPIError as e:
-                if self.errorStream in [self._STREAM_ERROR_BOTH, self._STREAM_ERROR_STD_OUT]:
+                if self.errorStream in [self._STREAM_ERROR_STDERR, self._STREAM_ERROR_BOTH]:
                     print(f'{dt_string} - GoogleSheetAPIError : {e}', file=sys.stderr)
             except Exception as e:
                 if self.catchingExceptionsFromRunnable:
